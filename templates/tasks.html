@@ -1,81 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Tasks</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
+
 <body>
+
+    <!-- THEME TOGGLE -->
+
+    <button id="themeToggle" class="theme-btn">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <!-- NAVBAR -->
 
     <nav class="navbar">
 
-        <h2>Tasks</h2>
+        <h2>
+
+            <i class="fa-solid fa-list-check"></i>
+
+            Team Task Manager
+
+        </h2>
 
         <div>
 
-            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard">
 
-            <a href="/projects">Projects</a>
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
 
-            <a href="/logout">Logout</a>
+            </a>
+
+            <a href="/projects">
+
+                <i class="fa-solid fa-diagram-project"></i>
+                Projects
+
+            </a>
+
+            <a href="/logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+
+            </a>
 
         </div>
 
     </nav>
 
+    <!-- MAIN CONTAINER -->
+
     <div class="main-container">
+
+        <!-- CREATE TASK -->
 
         {% if role == 'Admin' %}
 
         <div class="form-box">
 
-            <h2>Create Task</h2>
+            <h2>
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create Task
+
+            </h2>
 
             <form method="POST">
 
-                <input type="text" name="title" placeholder="Task Title" required>
+                <input type="text"
+                       name="title"
+                       placeholder="Task Title"
+                       required>
 
-                <textarea name="description" placeholder="Task Description" required></textarea>
+                <textarea name="description"
+                          placeholder="Task Description"
+                          required></textarea>
+
+                <input type="text"
+                       name="assigned_name"
+                       placeholder="Assigned User Name"
+                       required>
 
                 <select name="status">
 
-                    <option value="Pending">Pending</option>
-
-                    <option value="In Progress">In Progress</option>
-
-                    <option value="Completed">Completed</option>
-
-                </select>
-
-                <input type="date" name="due_date" required>
-
-                <select name="assigned_to">
-
-                    {% for user in users %}
-
-                    <option value="{{ user.id }}">
-                        {{ user.name }}
+                    <option value="Pending">
+                        Pending
                     </option>
 
-                    {% endfor %}
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
 
                 </select>
+
+                <input type="date"
+                       name="due_date"
+                       required>
 
                 <select name="project_id">
 
                     {% for project in projects %}
 
                     <option value="{{ project.id }}">
+
                         {{ project.title }}
+
                     </option>
 
                     {% endfor %}
 
                 </select>
 
-                <button type="submit">Create Task</button>
+                <button type="submit">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Create Task
+
+                </button>
 
             </form>
 
@@ -83,29 +149,247 @@
 
         {% endif %}
 
+        <!-- TASK LIST -->
+
         <div class="content-box">
 
-            <h2>All Tasks</h2>
+            <div class="section-top">
 
-            {% for task in tasks %}
+                <h2>
 
-            <div class="task-card">
+                    <i class="fa-solid fa-list"></i>
 
-                <h3>{{ task.title }}</h3>
+                    All Tasks
 
-                <p>{{ task.description }}</p>
-
-                <p><strong>Status:</strong> {{ task.status }}</p>
-
-                <p><strong>Due:</strong> {{ task.due_date.strftime('%d-%m-%Y') }}</p>
+                </h2>
 
             </div>
 
-            {% endfor %}
+            <!-- SEARCH -->
+
+            <form method="GET" class="search-form">
+
+                <input type="text"
+                       name="search"
+                       placeholder="Search by task or project name"
+                       value="{{ search }}">
+
+                <select name="status">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                </select>
+
+                <button type="submit">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </button>
+
+            </form>
+
+            <!-- GRID -->
+
+            <div class="task-grid">
+
+                {% for task in tasks %}
+
+                <div class="task-card floating-card">
+
+                    <!-- TOP -->
+
+                    <div class="task-top">
+
+                        <h3>
+
+                            {{ task.title }}
+
+                        </h3>
+
+                        <!-- STATUS -->
+
+                        {% if task.status == 'Completed' %}
+
+                        <span class="completed">
+
+                            Completed
+
+                        </span>
+
+                        {% elif task.due_date < now and task.status != 'Completed' %}
+
+                        <span class="overdue-status">
+
+                            Overdue
+
+                        </span>
+
+                        {% elif task.status == 'Pending' %}
+
+                        <span class="pending">
+
+                            Pending
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="inprogress">
+
+                            In Progress
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="task-description">
+
+                        {{ task.description }}
+
+                    </p>
+
+                    <!-- DETAILS -->
+
+                    <div class="task-details">
+
+                        <p>
+
+                            <i class="fa-solid fa-user"></i>
+
+                            <strong>Assigned:</strong>
+
+                            {{ task.assigned_name }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-diagram-project"></i>
+
+                            <strong>Project:</strong>
+
+                            {{ task.project.title }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-calendar"></i>
+
+                            <strong>Due:</strong>
+
+                            {{ task.due_date.strftime('%d-%m-%Y') }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- PROGRESS BAR -->
+
+                    <div class="progress-container">
+
+                        {% if task.status == 'Completed' %}
+
+                        <div class="progress-bar completed-bar"
+                             style="width:100%">
+                        </div>
+
+                        {% elif task.status == 'In Progress' %}
+
+                        <div class="progress-bar progress-bar-blue"
+                             style="width:60%">
+                        </div>
+
+                        {% else %}
+
+                        <div class="progress-bar pending-bar"
+                             style="width:30%">
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- DELETE -->
+
+                    {% if role == 'Admin' %}
+
+                    <a href="/delete_task/{{ task.id }}"
+                       class="delete-btn">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                        Delete
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
 
         </div>
 
     </div>
 
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light'){
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')){
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else{
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+    </script>
+
 </body>
+
 </html>

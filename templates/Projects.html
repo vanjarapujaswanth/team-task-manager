@@ -1,45 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Projects</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
+
 <body>
+
+    <!-- THEME TOGGLE -->
+
+    <button id="themeToggle" class="theme-btn">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <!-- NAVBAR -->
 
     <nav class="navbar">
 
-        <h2>Projects</h2>
+        <h2>
+
+            <i class="fa-solid fa-diagram-project"></i>
+
+            Team Task Manager
+
+        </h2>
 
         <div>
 
-            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard">
 
-            <a href="/tasks">Tasks</a>
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
 
-            <a href="/logout">Logout</a>
+            </a>
+
+            <a href="/tasks">
+
+                <i class="fa-solid fa-list-check"></i>
+                Tasks
+
+            </a>
+
+            <a href="/logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+
+            </a>
 
         </div>
 
     </nav>
 
+    <!-- MAIN CONTAINER -->
+
     <div class="main-container">
+
+        <!-- CREATE PROJECT -->
 
         {% if role == 'Admin' %}
 
         <div class="form-box">
 
-            <h2>Create Project</h2>
+            <h2>
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create Project
+
+            </h2>
 
             <form method="POST">
 
-                <input type="text" name="title" placeholder="Project Title" required>
+                <input type="text"
+                       name="title"
+                       placeholder="Project Title"
+                       required>
 
-                <textarea name="description" placeholder="Project Description" required></textarea>
+                <textarea name="description"
+                          placeholder="Project Description"
+                          required></textarea>
 
-                <button type="submit">Create Project</button>
+                <button type="submit">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Create Project
+
+                </button>
 
             </form>
 
@@ -47,25 +110,189 @@
 
         {% endif %}
 
+        <!-- PROJECT LIST -->
+
         <div class="content-box">
 
-            <h2>All Projects</h2>
+            <div class="section-top">
 
-            {% for project in projects %}
+                <h2>
 
-            <div class="project-card">
+                    <i class="fa-solid fa-folder-open"></i>
 
-                <h3>{{ project.title }}</h3>
+                    All Projects
 
-                <p>{{ project.description }}</p>
+                </h2>
 
             </div>
 
-            {% endfor %}
+            <!-- PROJECT GRID -->
+
+            <div class="project-grid">
+
+                {% for project in projects %}
+
+                <!-- CALCULATE PROGRESS -->
+
+                {% set completed = namespace(value=0) %}
+
+                {% for task in project.tasks %}
+
+                    {% if task.status == 'Completed' %}
+
+                        {% set completed.value = completed.value + 1 %}
+
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if project.tasks|length > 0 %}
+
+                    {% set progress =
+                    ((completed.value / project.tasks|length) * 100)|int %}
+
+                {% else %}
+
+                    {% set progress = 0 %}
+
+                {% endif %}
+
+                <!-- CARD -->
+
+                <div class="project-card floating-card">
+
+                    <!-- TOP -->
+
+                    <div class="project-top">
+
+                        <h3>
+
+                            {{ project.title }}
+
+                        </h3>
+
+                        <span class="project-badge">
+
+                            Active
+
+                        </span>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="project-description">
+
+                        {{ project.description }}
+
+                    </p>
+
+                    <!-- DETAILS -->
+
+                    <div class="project-details">
+
+                        <p>
+
+                            <i class="fa-solid fa-calendar"></i>
+
+                            <strong>Created:</strong>
+
+                            {{ project.created_at.strftime('%d-%m-%Y') }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-list-check"></i>
+
+                            <strong>Total Tasks:</strong>
+
+                            {{ project.tasks|length }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- PROGRESS -->
+
+                    <div class="progress-container">
+
+                        <div class="progress-bar progress-bar-blue"
+                             style="width: {{ progress }}%;">
+
+                        </div>
+
+                    </div>
+
+                    <p class="progress-text">
+
+                        {{ progress }}% Completed
+
+                    </p>
+
+                    <!-- DELETE BUTTON -->
+
+                    {% if role == 'Admin' %}
+
+                    <a href="/delete_project/{{ project.id }}"
+                       class="delete-btn">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                        Delete Project
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
 
         </div>
 
     </div>
 
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light') {
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')) {
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else {
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+
+        };
+
+    </script>
+
 </body>
+
 </html>

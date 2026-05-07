@@ -1,30 +1,232 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Team Task Manager</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
+
 <body>
 
-    <div class="container">
+    <!-- THEME TOGGLE -->
 
-        <div class="hero">
+    <button id="themeToggle" class="theme-btn">
 
-            <h1>Team Task Manager</h1>
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <h2>
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            Team Task Manager
+
+        </h2>
+
+        <div>
+
+            <a href="/login">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login
+
+            </a>
+
+            <a href="/signup">
+
+                <i class="fa-solid fa-user-plus"></i>
+                Signup
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- HERO SECTION -->
+
+    <div class="hero-container">
+
+        <div class="hero-left">
+
+            <div class="badge">
+
+                <i class="fa-solid fa-bolt"></i>
+
+                Smart Team Collaboration Platform
+
+            </div>
+
+            <h1>
+
+                Manage Projects
+                <span>Smarter</span>
+
+            </h1>
 
             <p>
-                Manage Projects, Assign Tasks, Track Progress,
-                and Collaborate with Your Team Efficiently.
+
+                A modern task management platform for teams to create projects,
+                assign tasks, track progress, monitor deadlines, and improve
+                productivity with a beautiful SaaS experience.
+
             </p>
 
-            <div class="buttons">
+            <div class="hero-buttons">
 
-                <a href="/signup" class="btn">Signup</a>
+                <a href="/signup" class="hero-btn">
 
-                <a href="/login" class="btn secondary">Login</a>
+                    <i class="fa-solid fa-rocket"></i>
+
+                    Get Started
+
+                </a>
+
+                <a href="/login" class="hero-btn secondary-btn">
+
+                    <i class="fa-solid fa-play"></i>
+
+                    Live Demo
+
+                </a>
+
+            </div>
+
+            <!-- FEATURES -->
+
+            <div class="features">
+
+                <div class="feature-card floating-card">
+
+                    <i class="fa-solid fa-diagram-project"></i>
+
+                    <h3>Project Management</h3>
+
+                    <p>
+
+                        Create and organize multiple projects efficiently.
+
+                    </p>
+
+                </div>
+
+                <div class="feature-card floating-card">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                    <h3>Task Tracking</h3>
+
+                    <p>
+
+                        Monitor task progress and overdue activities.
+
+                    </p>
+
+                </div>
+
+                <div class="feature-card floating-card">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <h3>Team Collaboration</h3>
+
+                    <p>
+
+                        Assign tasks and collaborate with team members.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="hero-right">
+
+            <div class="dashboard-preview floating-card">
+
+                <div class="preview-top">
+
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+
+                </div>
+
+                <div class="preview-content">
+
+                    <div class="mini-card blue-mini">
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                        <div>
+
+                            <h3>120</h3>
+                            <p>Total Tasks</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mini-card green-mini">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+
+                            <h3>85</h3>
+                            <p>Completed</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mini-card red-mini">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <div>
+
+                            <h3>5</h3>
+                            <p>Overdue</p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- GRAPH -->
+
+                    <div class="graph-section">
+
+                        <div class="graph-bar bar1"></div>
+                        <div class="graph-bar bar2"></div>
+                        <div class="graph-bar bar3"></div>
+                        <div class="graph-bar bar4"></div>
+                        <div class="graph-bar bar5"></div>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -32,5 +234,55 @@
 
     </div>
 
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <p>
+
+            © 2026 Vanjarapu Jaswanth
+
+        </p>
+
+    </footer>
+
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light'){
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')){
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else{
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+    </script>
+
 </body>
+
 </html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Overdue Tasks</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- THEME TOGGLE -->
+
+    <button id="themeToggle" class="theme-btn">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <h2>
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            Overdue Tasks
+
+        </h2>
+
+        <div>
+
+            <a href="/dashboard">
+
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+
+            </a>
+
+            <a href="/tasks">
+
+                <i class="fa-solid fa-list-check"></i>
+                Tasks
+
+            </a>
+
+            <a href="/logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- PAGE -->
+
+    <div class="main-container">
+
+        <div class="content-box">
+
+            <!-- TITLE -->
+
+            <div class="section-top">
+
+                <h2>
+
+                    <i class="fa-solid fa-clock"></i>
+
+                    Overdue Task Details
+
+                </h2>
+
+            </div>
+
+            <!-- EMPTY MESSAGE -->
+
+            {% if tasks|length == 0 %}
+
+            <div class="empty-box floating-card">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <h2>
+
+                    No Overdue Tasks 🎉
+
+                </h2>
+
+                <p>
+
+                    Great job! Your team is managing deadlines properly.
+
+                </p>
+
+            </div>
+
+            {% endif %}
+
+            <!-- GRID -->
+
+            <div class="task-grid">
+
+                {% for task in tasks %}
+
+                <div class="task-card floating-card overdue-card">
+
+                    <!-- TOP -->
+
+                    <div class="task-top">
+
+                        <h3>
+
+                            {{ task.title }}
+
+                        </h3>
+
+                        <span class="overdue-status">
+
+                            Overdue
+
+                        </span>
+
+                    </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="task-description">
+
+                        {{ task.description }}
+
+                    </p>
+
+                    <!-- DETAILS -->
+
+                    <div class="task-details">
+
+                        <p>
+
+                            <i class="fa-solid fa-user"></i>
+
+                            <strong>Assigned:</strong>
+
+                            {{ task.assigned_name }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-diagram-project"></i>
+
+                            <strong>Project:</strong>
+
+                            {{ task.project.title }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-calendar-xmark"></i>
+
+                            <strong>Due Date:</strong>
+
+                            {{ task.due_date.strftime('%d-%m-%Y') }}
+
+                        </p>
+
+                        <p>
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <strong>Status:</strong>
+
+                            {{ task.status }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- ALERT -->
+
+                    <div class="overdue-alert">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        Immediate attention required
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light'){
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')){
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else{
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

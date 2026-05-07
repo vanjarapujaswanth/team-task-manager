@@ -1,44 +1,257 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Signup</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
+
 <body>
 
-    <div class="form-container">
+    <!-- THEME TOGGLE -->
 
-        <h2>Create Account</h2>
+    <button id="themeToggle" class="theme-btn">
 
-        <form method="POST">
+        <i class="fa-solid fa-moon"></i>
 
-            <input type="text" name="name" placeholder="Full Name" required>
+    </button>
 
-            <input type="email" name="email" placeholder="Email Address" required>
+    <!-- SIGNUP PAGE -->
 
-            <input type="password" name="password" placeholder="Password" required>
+    <div class="auth-page">
 
-            <select name="role">
+        <!-- LEFT SIDE -->
 
-                <option value="Admin">Admin</option>
+        <div class="auth-left">
 
-                <option value="Member">Member</option>
+            <div class="auth-content">
 
-            </select>
+                <div class="auth-badge">
 
-            <button type="submit">Signup</button>
+                    <i class="fa-solid fa-rocket"></i>
 
-        </form>
+                    Build Smarter Teams
 
-        <p>
-            Already have an account?
-            <a href="/login">Login</a>
-        </p>
+                </div>
+
+                <h1>
+
+                    Create Account 🚀
+
+                </h1>
+
+                <p>
+
+                    Join the modern team management platform to organize projects,
+                    assign tasks, monitor deadlines, and improve team productivity.
+
+                </p>
+
+                <!-- FEATURES -->
+
+                <div class="auth-features">
+
+                    <div class="auth-feature-card floating-card">
+
+                        <i class="fa-solid fa-folder-open"></i>
+
+                        <span>Manage Projects</span>
+
+                    </div>
+
+                    <div class="auth-feature-card floating-card">
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                        <span>Track Tasks</span>
+
+                    </div>
+
+                    <div class="auth-feature-card floating-card">
+
+                        <i class="fa-solid fa-chart-pie"></i>
+
+                        <span>Analytics Dashboard</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="auth-right">
+
+            <div class="auth-box floating-card">
+
+                <h2>
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Signup
+
+                </h2>
+
+                <form method="POST">
+
+                    <!-- NAME -->
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        <input type="text"
+                               name="name"
+                               placeholder="Enter Full Name"
+                               required>
+
+                    </div>
+
+                    <!-- EMAIL -->
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                        <input type="email"
+                               name="email"
+                               placeholder="Enter Email"
+                               required>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input type="password"
+                               name="password"
+                               placeholder="Create Password"
+                               required>
+
+                    </div>
+
+                    <!-- ROLE -->
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                        <select name="role" required>
+
+                            <option value="">
+
+                                Select Role
+
+                            </option>
+
+                            <option value="Admin">
+
+                                Admin
+
+                            </option>
+
+                            <option value="Member">
+
+                                Member
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- SIGNUP BUTTON -->
+
+                    <button type="submit"
+                            class="auth-btn">
+
+                        <i class="fa-solid fa-user-plus"></i>
+
+                        Create Account
+
+                    </button>
+
+                </form>
+
+                <!-- LOGIN -->
+
+                <div class="bottom-link">
+
+                    <p>
+
+                        Already have an account?
+
+                        <a href="/login">
+
+                            Login
+
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light'){
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')){
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else{
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+    </script>
+
 </body>
+
 </html>

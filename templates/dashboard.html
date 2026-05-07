@@ -1,66 +1,323 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
+
 <body>
+
+    <!-- THEME TOGGLE -->
+
+    <button id="themeToggle" class="theme-btn">
+
+        <i class="fa-solid fa-moon"></i>
+
+    </button>
+
+    <!-- NAVBAR -->
 
     <nav class="navbar">
 
-        <h2>Team Task Manager</h2>
+        <h2>
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            Team Task Manager
+
+        </h2>
 
         <div>
 
-            <a href="/projects">Projects</a>
+            <a href="/projects">
 
-            <a href="/tasks">Tasks</a>
+                <i class="fa-solid fa-diagram-project"></i>
+                Projects
 
-            <a href="/logout">Logout</a>
+            </a>
+
+            <a href="/tasks">
+
+                <i class="fa-solid fa-list-check"></i>
+                Tasks
+
+            </a>
+
+            <a href="/logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+
+            </a>
 
         </div>
 
     </nav>
 
+    <!-- DASHBOARD -->
+
     <div class="dashboard-container">
 
-        <h1>Welcome, {{ name }}</h1>
+        <!-- TOP SECTION -->
 
-        <p class="role">Role: {{ role }}</p>
+        <div class="dashboard-header floating-card">
 
-        <div class="cards">
+            <div>
 
-            <div class="card">
+                <h1>
+
+                    Welcome, {{ name }}
+
+                    👋
+
+                </h1>
+
+                <p class="role-text">
+
+                    Role:
+                    <strong>{{ role }}</strong>
+
+                </p>
+
+            </div>
+
+            <div class="dashboard-icon">
+
+                <i class="fa-solid fa-chart-pie"></i>
+
+            </div>
+
+        </div>
+
+        <!-- STATS CARDS -->
+
+        <div class="dashboard-grid">
+
+            <!-- TOTAL TASKS -->
+
+            <div class="dashboard-card floating-card blue-card">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                </div>
+
                 <h2>{{ total_tasks }}</h2>
+
                 <p>Total Tasks</p>
+
             </div>
 
-            <div class="card">
+            <!-- COMPLETED -->
+
+            <div class="dashboard-card floating-card green-card">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
                 <h2>{{ completed_tasks }}</h2>
+
                 <p>Completed</p>
+
             </div>
 
-            <div class="card">
+            <!-- PENDING -->
+
+            <div class="dashboard-card floating-card yellow-card">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                </div>
+
                 <h2>{{ pending_tasks }}</h2>
+
                 <p>Pending</p>
+
             </div>
 
-            <div class="card">
+            <!-- IN PROGRESS -->
+
+            <div class="dashboard-card floating-card purple-card">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-spinner"></i>
+
+                </div>
+
                 <h2>{{ in_progress_tasks }}</h2>
+
                 <p>In Progress</p>
+
             </div>
 
-            <div class="card overdue">
+            <!-- OVERDUE -->
+
+            <a href="/overdue_tasks"
+               class="dashboard-card floating-card red-card card-link">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </div>
+
                 <h2>{{ overdue_tasks }}</h2>
-                <p>Overdue</p>
+
+                <p>Overdue Tasks</p>
+
+            </a>
+
+            <!-- PROJECTS -->
+
+            <div class="dashboard-card floating-card cyan-card">
+
+                <div class="card-icon">
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                </div>
+
+                <h2>{{ total_projects }}</h2>
+
+                <p>Total Projects</p>
+
+            </div>
+
+        </div>
+
+        <!-- PROGRESS SECTION -->
+
+        <div class="analytics-section">
+
+            <!-- COMPLETION RATE -->
+
+            <div class="analytics-card floating-card">
+
+                <h2>
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Project Completion
+
+                </h2>
+
+                <div class="circle-progress">
+
+                    <div class="circle">
+
+                        <span>
+
+                            {{ completion_percentage }}%
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p>
+
+                    Overall team productivity based on completed tasks.
+
+                </p>
+
+            </div>
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="analytics-card floating-card">
+
+                <h2>
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    Quick Actions
+
+                </h2>
+
+                <div class="quick-actions">
+
+                    <a href="/projects" class="quick-btn">
+
+                        <i class="fa-solid fa-folder-plus"></i>
+
+                        Manage Projects
+
+                    </a>
+
+                    <a href="/tasks" class="quick-btn">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Manage Tasks
+
+                    </a>
+
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
+    <!-- THEME SCRIPT -->
+
+    <script>
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const body = document.body;
+
+        // LOAD SAVED THEME
+
+        if(localStorage.getItem('theme') === 'light'){
+
+            body.classList.add('light-theme');
+
+        }
+
+        // TOGGLE THEME
+
+        themeToggle.onclick = () => {
+
+            body.classList.toggle('light-theme');
+
+            if(body.classList.contains('light-theme')){
+
+                localStorage.setItem('theme', 'light');
+
+            }
+            else{
+
+                localStorage.setItem('theme', 'dark');
+
+            }
+        }
+
+    </script>
+
 </body>
+
 </html>

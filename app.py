@@ -4,16 +4,20 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 
-# Secret Key for Sessions
+# Secret Key
 app.config['SECRET_KEY'] = 'mysecretkey'
 
-# Database Configuration
+# Database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize Extensions
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
+# =========================
+# DATABASE MODELS
+# =========================
 
 # User Model
 class User(db.Model):
@@ -23,15 +27,25 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False)
 
-    def __repr__(self):
-        return f'<User {self.name}>'
+# Project Model
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=False)
 
-# Home Route
+    # Foreign Key
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+# =========================
+# ROUTES
+# =========================
+
+# Home
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Signup Route
+# Signup
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
 
@@ -63,7 +77,7 @@ def signup():
 
     return render_template('signup.html')
 
-# Login Route
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -76,7 +90,6 @@ def login():
 
         if user and bcrypt.check_password_hash(user.password, password):
 
-            # Store Session Data
             session['user_id'] = user.id
             session['user_name'] = user.name
             session['role'] = user.role
@@ -87,7 +100,7 @@ def login():
 
     return render_template('login.html')
 
-# Dashboard Route
+# Dashboard
 @app.route('/dashboard')
 def dashboard():
 
@@ -100,7 +113,47 @@ def dashboard():
         role=session['role']
     )
 
-# Logout Route
+# =========================
+# PROJECT MANAGEMENT
+# =========================
+
+# Create & View Projects
+@app.route('/projects', methods=['GET', 'POST'])
+def projects():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    # Only Admin Can Create Projects
+    if request.method == 'POST':
+
+        if session['role'] != 'Admin':
+            return "Access Denied! Only Admin can create projects."
+
+        title = request.form['title']
+        description = request.form['description']
+
+        new_project = Project(
+            title=title,
+            description=description,
+            created_by=session['user_id']
+        )
+
+        db.session.add(new_project)
+        db.session.commit()
+
+        return redirect('/projects')
+
+    # Fetch All Projects
+    all_projects = Project.query.all()
+
+    return render_template(
+        'projects.html',
+        projects=all_projects,
+        role=session['role']
+    )
+
+# Logout
 @app.route('/logout')
 def logout():
 

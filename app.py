@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 
@@ -7,8 +8,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize Database
+# Initialize Extensions
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 # User Model
 class User(db.Model):
@@ -24,9 +26,44 @@ class User(db.Model):
 # Home Route
 @app.route('/')
 def home():
-    return "Database Connected Successfully!"
+    return render_template('index.html')
 
-# Create Database Tables
+# Signup Route
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+
+    if request.method == 'POST':
+
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        role = request.form['role']
+
+        # Check Existing User
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+            return "Email already registered!"
+
+        # Hash Password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # Create User
+        new_user = User(
+            name=name,
+            email=email,
+            password=hashed_password,
+            role=role
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect('/signup')
+
+    return render_template('signup.html')
+
+# Create Database
 with app.app_context():
     db.create_all()
 

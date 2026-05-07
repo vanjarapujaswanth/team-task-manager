@@ -122,10 +122,33 @@ def dashboard():
     if 'user_id' not in session:
         return redirect('/login')
 
+    # Total Tasks
+    total_tasks = Task.query.count()
+
+    # Completed Tasks
+    completed_tasks = Task.query.filter_by(status='Completed').count()
+
+    # Pending Tasks
+    pending_tasks = Task.query.filter_by(status='Pending').count()
+
+    # In Progress Tasks
+    in_progress_tasks = Task.query.filter_by(status='In Progress').count()
+
+    # Overdue Tasks
+    overdue_tasks = Task.query.filter(
+        Task.due_date < datetime.utcnow(),
+        Task.status != 'Completed'
+    ).count()
+
     return render_template(
         'dashboard.html',
         name=session['user_name'],
-        role=session['role']
+        role=session['role'],
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        in_progress_tasks=in_progress_tasks,
+        overdue_tasks=overdue_tasks
     )
 
 # =========================

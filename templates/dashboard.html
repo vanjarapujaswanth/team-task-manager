@@ -5,13 +5,27 @@
 </head>
 <body>
 
-    <h1>Dashboard</h1>
+    <h1>Dashboard Analytics</h1>
 
     <h2>Welcome, {{ name }}</h2>
 
     <h3>Role: {{ role }}</h3>
 
-    <br>
+    <hr>
+
+    <h2>Task Statistics</h2>
+
+    <h3>Total Tasks: {{ total_tasks }}</h3>
+
+    <h3>Completed Tasks: {{ completed_tasks }}</h3>
+
+    <h3>Pending Tasks: {{ pending_tasks }}</h3>
+
+    <h3>In Progress Tasks: {{ in_progress_tasks }}</h3>
+
+    <h3>Overdue Tasks: {{ overdue_tasks }}</h3>
+
+    <hr>
 
     <a href="/projects">Manage Projects</a>
 

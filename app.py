@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -33,8 +34,22 @@ class Project(db.Model):
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=False)
 
-    # Foreign Key
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+# Task Model
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    status = db.Column(db.String(50), default='Pending')
+
+    due_date = db.Column(db.DateTime)
+
+    # Foreign Keys
+    assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 
 # =========================
 # ROUTES
@@ -117,18 +132,16 @@ def dashboard():
 # PROJECT MANAGEMENT
 # =========================
 
-# Create & View Projects
 @app.route('/projects', methods=['GET', 'POST'])
 def projects():
 
     if 'user_id' not in session:
         return redirect('/login')
 
-    # Only Admin Can Create Projects
     if request.method == 'POST':
 
         if session['role'] != 'Admin':
-            return "Access Denied! Only Admin can create projects."
+            return "Access Denied!"
 
         title = request.form['title']
         description = request.form['description']
@@ -144,11 +157,60 @@ def projects():
 
         return redirect('/projects')
 
-    # Fetch All Projects
     all_projects = Project.query.all()
 
     return render_template(
         'projects.html',
+        projects=all_projects,
+        role=session['role']
+    )
+
+# =========================
+# TASK MANAGEMENT
+# =========================
+
+@app.route('/tasks', methods=['GET', 'POST'])
+def tasks():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    # Admin Creates Tasks
+    if request.method == 'POST':
+
+        if session['role'] != 'Admin':
+            return "Access Denied!"
+
+        title = request.form['title']
+        description = request.form['description']
+        status = request.form['status']
+        due_date = request.form['due_date']
+        assigned_to = request.form['assigned_to']
+        project_id = request.form['project_id']
+
+        new_task = Task(
+            title=title,
+            description=description,
+            status=status,
+            due_date=datetime.strptime(due_date, '%Y-%m-%d'),
+            assigned_to=assigned_to,
+            project_id=project_id
+        )
+
+        db.session.add(new_task)
+        db.session.commit()
+
+        return redirect('/tasks')
+
+    # Fetch Data
+    all_tasks = Task.query.all()
+    all_users = User.query.all()
+    all_projects = Project.query.all()
+
+    return render_template(
+        'tasks.html',
+        tasks=all_tasks,
+        users=all_users,
         projects=all_projects,
         role=session['role']
     )

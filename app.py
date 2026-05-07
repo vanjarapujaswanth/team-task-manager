@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+
+# Secret Key for Sessions
+app.config['SECRET_KEY'] = 'mysecretkey'
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -39,16 +42,13 @@ def signup():
         password = request.form['password']
         role = request.form['role']
 
-        # Check Existing User
         existing_user = User.query.filter_by(email=email).first()
 
         if existing_user:
             return "Email already registered!"
 
-        # Hash Password
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-        # Create User
         new_user = User(
             name=name,
             email=email,
@@ -59,9 +59,54 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect('/signup')
+        return redirect('/login')
 
     return render_template('signup.html')
+
+# Login Route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+    if request.method == 'POST':
+
+        email = request.form['email']
+        password = request.form['password']
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and bcrypt.check_password_hash(user.password, password):
+
+            # Store Session Data
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            session['role'] = user.role
+
+            return redirect('/dashboard')
+
+        return "Invalid Email or Password!"
+
+    return render_template('login.html')
+
+# Dashboard Route
+@app.route('/dashboard')
+def dashboard():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    return render_template(
+        'dashboard.html',
+        name=session['user_name'],
+        role=session['role']
+    )
+
+# Logout Route
+@app.route('/logout')
+def logout():
+
+    session.clear()
+
+    return redirect('/login')
 
 # Create Database
 with app.app_context():

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -478,6 +478,291 @@ def forgot_password():
 with app.app_context():
 
     db.create_all()
+
+
+
+# ==========================================
+# REST API ROUTES
+# ==========================================
+
+from flask import jsonify
+
+
+# ==========================================
+# GET ALL PROJECTS API
+# ==========================================
+
+@app.route('/api/projects', methods=['GET'])
+def api_projects():
+
+    projects = Project.query.all()
+
+    data = []
+
+    for project in projects:
+
+        data.append({
+
+            "id": project.id,
+            "title": project.title,
+            "description": project.description,
+            "created_at": project.created_at.strftime('%Y-%m-%d')
+
+        })
+
+    return jsonify(data)
+
+
+# ==========================================
+# GET ALL TASKS API
+# ==========================================
+
+@app.route('/api/tasks', methods=['GET'])
+def api_tasks():
+
+    tasks = Task.query.all()
+
+    data = []
+
+    for task in tasks:
+
+        data.append({
+
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "status": task.status,
+            "assigned_name": task.assigned_name,
+            "due_date": task.due_date.strftime('%Y-%m-%d'),
+            "project": task.project.title
+
+        })
+
+    return jsonify(data)
+
+
+# ==========================================
+# GET SINGLE TASK API
+# ==========================================
+
+@app.route('/api/task/<int:id>', methods=['GET'])
+def api_single_task(id):
+
+    task = Task.query.get_or_404(id)
+
+    data = {
+
+        "id": task.id,
+        "title": task.title,
+        "description": task.description,
+        "status": task.status,
+        "assigned_name": task.assigned_name,
+        "due_date": task.due_date.strftime('%Y-%m-%d'),
+        "project": task.project.title
+
+    }
+
+    return jsonify(data)
+
+
+# ==========================================
+# CREATE TASK API
+# ==========================================
+
+@app.route('/api/create_task', methods=['POST'])
+def api_create_task():
+
+    data = request.get_json()
+
+    title = data.get('title')
+    description = data.get('description')
+    status = data.get('status')
+    assigned_name = data.get('assigned_name')
+    due_date = data.get('due_date')
+    project_id = data.get('project_id')
+        # VALIDATIONS
+
+    if not title or not description or not status:
+
+        return jsonify({
+
+            "error": "Missing required fields"
+
+        }), 400
+
+    task = Task(
+
+        title=title,
+        description=description,
+        status=status,
+        assigned_name=assigned_name,
+        due_date=datetime.strptime(due_date, '%Y-%m-%d'),
+        project_id=project_id
+
+    )
+
+    db.session.add(task)
+
+    db.session.commit()
+
+    return jsonify({
+
+        "message": "Task created successfully"
+
+    })
+
+
+# ==========================================
+# UPDATE TASK API
+# ==========================================
+
+@app.route('/api/update_task/<int:id>', methods=['PUT'])
+def api_update_task(id):
+
+    task = Task.query.get_or_404(id)
+
+    data = request.get_json()
+
+    task.title = data.get('title', task.title)
+
+    task.description = data.get(
+        'description',
+        task.description
+    )
+
+    task.status = data.get(
+        'status',
+        task.status
+    )
+
+    task.assigned_name = data.get(
+        'assigned_name',
+        task.assigned_name
+    )
+
+    db.session.commit()
+
+    return jsonify({
+
+        "message": "Task updated successfully"
+
+    })
+
+
+# ==========================================
+# DELETE TASK API
+# ==========================================
+
+@app.route('/api/delete_task/<int:id>', methods=['DELETE'])
+def api_delete_task(id):
+
+    task = Task.query.get_or_404(id)
+
+    db.session.delete(task)
+
+    db.session.commit()
+
+    return jsonify({
+
+        "message": "Task deleted successfully"
+
+    })
+
+
+# ==========================================
+# DELETE PROJECT API
+# ==========================================
+
+@app.route('/api/delete_project/<int:id>', methods=['DELETE'])
+def api_delete_project(id):
+
+    project = Project.query.get_or_404(id)
+
+    db.session.delete(project)
+
+    db.session.commit()
+
+    return jsonify({
+
+        "message": "Project deleted successfully"
+
+    })
+
+# ==========================================
+# SEARCH TASK API
+# ==========================================
+
+@app.route('/api/search_tasks', methods=['GET'])
+def api_search_tasks():
+
+    query = request.args.get('query')
+
+    if not query:
+
+        return jsonify({
+
+            "error": "Search query missing"
+
+        }), 400
+
+    tasks = Task.query.filter(
+
+        Task.title.contains(query) |
+
+        Task.assigned_name.contains(query)
+
+    ).all()
+
+    data = []
+
+    for task in tasks:
+
+        data.append({
+
+            "id": task.id,
+            "title": task.title,
+            "status": task.status,
+            "assigned_name": task.assigned_name,
+            "project": task.project.title
+
+        })
+
+    return jsonify(data)
+
+# ==========================================
+# FILTER TASKS BY STATUS
+# ==========================================
+
+@app.route('/api/filter_tasks', methods=['GET'])
+def api_filter_tasks():
+
+    status = request.args.get('status')
+
+    if not status:
+
+        return jsonify({
+
+            "error": "Status missing"
+
+        }), 400
+
+    tasks = Task.query.filter_by(status=status).all()
+
+    data = []
+
+    for task in tasks:
+
+        data.append({
+
+            "id": task.id,
+            "title": task.title,
+            "status": task.status,
+            "assigned_name": task.assigned_name,
+            "project": task.project.title
+
+        })
+
+    return jsonify(data)
 
 
 # =========================

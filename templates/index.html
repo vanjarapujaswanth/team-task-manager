@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Team Task Manager</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
 
-    <h1>Team Task Manager</h1>
+    <div class="container">
 
-    <a href="/signup">Signup</a>
-    <br><br>
+        <div class="hero">
 
-    <a href="/login">Login</a>
+            <h1>Team Task Manager</h1>
+
+            <p>
+                Manage Projects, Assign Tasks, Track Progress,
+                and Collaborate with Your Team Efficiently.
+            </p>
+
+            <div class="buttons">
+
+                <a href="/signup" class="btn">Signup</a>
+
+                <a href="/login" class="btn secondary">Login</a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>

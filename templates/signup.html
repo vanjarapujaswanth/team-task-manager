@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Signup</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
 
-    <h2>User Signup</h2>
+    <div class="form-container">
 
-    <form method="POST">
+        <h2>Create Account</h2>
 
-        <input type="text" name="name" placeholder="Enter Name" required>
-        <br><br>
+        <form method="POST">
 
-        <input type="email" name="email" placeholder="Enter Email" required>
-        <br><br>
+            <input type="text" name="name" placeholder="Full Name" required>
 
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <br><br>
+            <input type="email" name="email" placeholder="Email Address" required>
 
-        <select name="role">
+            <input type="password" name="password" placeholder="Password" required>
 
-            <option value="Admin">Admin</option>
+            <select name="role">
 
-            <option value="Member">Member</option>
+                <option value="Admin">Admin</option>
 
-        </select>
+                <option value="Member">Member</option>
 
-        <br><br>
+            </select>
 
-        <button type="submit">Signup</button>
+            <button type="submit">Signup</button>
 
-    </form>
+        </form>
+
+        <p>
+            Already have an account?
+            <a href="/login">Login</a>
+        </p>
+
+    </div>
 
 </body>
 </html>

@@ -1,106 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Tasks</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
 
-    <h1>Task Management</h1>
+    <nav class="navbar">
 
-    <!-- Admin Only -->
-    {% if role == 'Admin' %}
-
-    <h2>Create Task</h2>
-
-    <form method="POST">
-
-        <input type="text" name="title" placeholder="Task Title" required>
-        <br><br>
-
-        <textarea name="description" placeholder="Task Description" required></textarea>
-        <br><br>
-
-        <select name="status">
-
-            <option value="Pending">Pending</option>
-
-            <option value="In Progress">In Progress</option>
-
-            <option value="Completed">Completed</option>
-
-        </select>
-
-        <br><br>
-
-        <input type="date" name="due_date" required>
-
-        <br><br>
-
-        <!-- Assign User -->
-        <select name="assigned_to">
-
-            {% for user in users %}
-
-                <option value="{{ user.id }}">
-
-                    {{ user.name }}
-
-                </option>
-
-            {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <!-- Select Project -->
-        <select name="project_id">
-
-            {% for project in projects %}
-
-                <option value="{{ project.id }}">
-
-                    {{ project.title }}
-
-                </option>
-
-            {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <button type="submit">Create Task</button>
-
-    </form>
-
-    {% endif %}
-
-    <hr>
-
-    <h2>All Tasks</h2>
-
-    {% for task in tasks %}
+        <h2>Tasks</h2>
 
         <div>
 
-            <h3>{{ task.title }}</h3>
+            <a href="/dashboard">Dashboard</a>
 
-            <p>{{ task.description }}</p>
+            <a href="/projects">Projects</a>
 
-            <p>Status: {{ task.status }}</p>
-
-            <p>Due Date: {{ task.due_date }}</p>
+            <a href="/logout">Logout</a>
 
         </div>
 
-        <hr>
+    </nav>
 
-    {% endfor %}
+    <div class="main-container">
 
-    <br>
+        {% if role == 'Admin' %}
 
-    <a href="/dashboard">Back to Dashboard</a>
+        <div class="form-box">
+
+            <h2>Create Task</h2>
+
+            <form method="POST">
+
+                <input type="text" name="title" placeholder="Task Title" required>
+
+                <textarea name="description" placeholder="Task Description" required></textarea>
+
+                <select name="status">
+
+                    <option value="Pending">Pending</option>
+
+                    <option value="In Progress">In Progress</option>
+
+                    <option value="Completed">Completed</option>
+
+                </select>
+
+                <input type="date" name="due_date" required>
+
+                <select name="assigned_to">
+
+                    {% for user in users %}
+
+                    <option value="{{ user.id }}">
+                        {{ user.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <select name="project_id">
+
+                    {% for project in projects %}
+
+                    <option value="{{ project.id }}">
+                        {{ project.title }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <button type="submit">Create Task</button>
+
+            </form>
+
+        </div>
+
+        {% endif %}
+
+        <div class="content-box">
+
+            <h2>All Tasks</h2>
+
+            {% for task in tasks %}
+
+            <div class="task-card">
+
+                <h3>{{ task.title }}</h3>
+
+                <p>{{ task.description }}</p>
+
+                <p><strong>Status:</strong> {{ task.status }}</p>
+
+                <p><strong>Due:</strong> {{ task.due_date.strftime('%d-%m-%Y') }}</p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </body>
 </html>

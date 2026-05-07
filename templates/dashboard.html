@@ -1,41 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
 
-    <h1>Dashboard Analytics</h1>
+    <nav class="navbar">
 
-    <h2>Welcome, {{ name }}</h2>
+        <h2>Team Task Manager</h2>
 
-    <h3>Role: {{ role }}</h3>
+        <div>
 
-    <hr>
+            <a href="/projects">Projects</a>
 
-    <h2>Task Statistics</h2>
+            <a href="/tasks">Tasks</a>
 
-    <h3>Total Tasks: {{ total_tasks }}</h3>
+            <a href="/logout">Logout</a>
 
-    <h3>Completed Tasks: {{ completed_tasks }}</h3>
+        </div>
 
-    <h3>Pending Tasks: {{ pending_tasks }}</h3>
+    </nav>
 
-    <h3>In Progress Tasks: {{ in_progress_tasks }}</h3>
+    <div class="dashboard-container">
 
-    <h3>Overdue Tasks: {{ overdue_tasks }}</h3>
+        <h1>Welcome, {{ name }}</h1>
 
-    <hr>
+        <p class="role">Role: {{ role }}</p>
 
-    <a href="/projects">Manage Projects</a>
+        <div class="cards">
 
-    <br><br>
+            <div class="card">
+                <h2>{{ total_tasks }}</h2>
+                <p>Total Tasks</p>
+            </div>
 
-    <a href="/tasks">Manage Tasks</a>
+            <div class="card">
+                <h2>{{ completed_tasks }}</h2>
+                <p>Completed</p>
+            </div>
 
-    <br><br>
+            <div class="card">
+                <h2>{{ pending_tasks }}</h2>
+                <p>Pending</p>
+            </div>
 
-    <a href="/logout">Logout</a>
+            <div class="card">
+                <h2>{{ in_progress_tasks }}</h2>
+                <p>In Progress</p>
+            </div>
+
+            <div class="card overdue">
+                <h2>{{ overdue_tasks }}</h2>
+                <p>Overdue</p>
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>
